@@ -36,7 +36,7 @@ def recs_using_association_rules(request, user_id, take=6):
     print(f"Events for user {user_id}: {list(events)}")
 
     # Take the first 20 unique content_ids as seeds
-    seeds = set(events[:20])
+    seeds = set(event for event in events if event != '0')
     print(f"Seeds: {seeds}")
 
     # Fetch association rules for the seeds, excluding the seeds themselves
@@ -47,6 +47,7 @@ def recs_using_association_rules(request, user_id, take=6):
         .order_by('-confidence')
     
     print(f"Rules: {list(rules)}")
+    print(SeededRecs.objects.__str__())
 
     # Prepare the recommendations
     recs = [{'id': '{0:07d}'.format(int(rule['target'])),

@@ -95,10 +95,12 @@ class UserClusterCalculator(object):
             Rating.objects.values('user_id')
                 .annotate(movie_count=Count('movie_id'))
                 .order_by('-movie_count'))
+        
         content_ids = list(Rating.objects.values('movie_id').distinct())
         content_map = {content_ids[i]['movie_id']: i
                        for i in range(len(content_ids))}
         num_users = len(user_ids)
+        #Проблема внизу
         user_ratings = dok_matrix((num_users,
                                    len(content_ids)),
                                   dtype=np.float32)
@@ -107,6 +109,7 @@ class UserClusterCalculator(object):
             ratings = Rating.objects.filter(user_id=user_ids[i]['user_id'])
             for user_rating in ratings:
                 user_ratings[i, content_map[user_rating.movie_id]] = user_rating.rating
+            print(f"{num_users-i} users left")
         print('data loaded')
 
         return user_ids, user_ratings
